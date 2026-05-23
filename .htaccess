@@ -1,0 +1,56 @@
+# Disable directory listing
+Options -Indexes
+
+# Allow crawlers and public visitors to read the website.
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+</IfModule>
+
+# Make crawler-facing files explicitly public.
+<FilesMatch "^(robots\.txt|favicon\.ico)$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    SetEnvIfNoCase User-Agent "facebookexternalhit" allow_share_crawler=1
+    SetEnvIfNoCase User-Agent "Facebot" allow_share_crawler=1
+    SetEnvIfNoCase User-Agent "WhatsApp" allow_share_crawler=1
+    SetEnvIfNoCase User-Agent "Twitterbot" allow_share_crawler=1
+    SetEnvIfNoCase User-Agent "LinkedInBot" allow_share_crawler=1
+    Header always unset X-Robots-Tag env=allow_share_crawler
+</IfModule>
+
+AddType text/plain .txt
+AddType image/png .png
+AddType image/x-icon .ico
+
+# Security headers (hapus jika hosting tidak support mod_headers)
+# <IfModule mod_headers.c>
+#     Header set X-Content-Type-Options "nosniff"
+#     Header set X-Frame-Options "SAMEORIGIN"
+#     Header set X-XSS-Protection "1; mode=block"
+# </IfModule>
+
+# PHP settings (opsional, hapus jika error)
+<IfModule mod_php.c>
+    php_value upload_max_filesize 5M
+    php_value post_max_size 10M
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 5M
+    php_value post_max_size 10M
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 5M
+    php_value post_max_size 10M
+</IfModule>
